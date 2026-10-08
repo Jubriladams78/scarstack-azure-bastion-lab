@@ -1,7 +1,7 @@
 
 # Secure Azure Ubuntu VM Deployment — Nginx + Azure Bastion
 
-Enterprise-grade deployment of a hardened Ubuntu Linux web server on Microsoft Azure, with **zero public SSH exposure**. All administrative access flows through **Azure Bastion**, while the Nginx web application is served publicly over HTTP via an Azure DNS name.
+Enterprise-grade deployment of a hardened Ubuntu Linux web server on Microsoft Azure. All administrative access flows through **Azure Bastion**, while the Nginx web application is served publicly over HTTP via an Azure DNS name.
 
 > 🎓 Built as part of the **Scarstack Solutions IT Bootcamp** (Azure Cloud Solution Architect track, July 2026 Cohort).
 
@@ -23,7 +23,7 @@ Admin ──HTTPS:443──▶ Azure Bastion ──SSH (private IP)──▶─�
 
 **Key security decisions:**
 
-- **No public SSH** — the VM is created with zero public inbound ports; SSH happens over Bastion's private connection
+- **Intended design: SSH only through Bastion.** The VM was created with no public inbound ports, so administration runs over Bastion's private connection (see Post-lab review below)
 - **Subnet-level NSG** — traffic rules enforced at the subnet (`nsg-scarstack-production`), not the NIC, so policy scales to every future VM in the subnet
 - **Governance tags** — Department, Environment, Project, Owner, and CostCenter applied for cost tracking and ownership
 
@@ -35,15 +35,11 @@ Admin ──HTTPS:443──▶ Azure Bastion ──SSH (private IP)──▶─�
 | Virtual Network | `vnet-scarstack-security-prod` | `10.1.0.0/14` |
 | Subnet | `subnet-production` | `10.1.0.0/26` |
 | Azure Bastion | enabled on VNet | Secure browser-based SSH |
-| NSG | `nsg-scarstack-production` | Allows 22/80/443, associated to subnet |
+| NSG | `nsg-scarstack-production` | Allows 22/80/443, associated to subnet. Port 22 should have been limited to the Bastion subnet (see Post-lab review) |
 | Virtual Machine | `vm-linux-nginx-prod` | Ubuntu LTS, Standard B2s, Zone 1, Premium SSD |
 | Public IP + DNS | `scarstack-nginx-prod.<region>.cloudapp.azure.com` | Public web access |
 
 ## Deployment Walkthrough
-
-Full step-by-step instructions, configuration values, and required screenshots:
-
-📄 **[lab-01-secure-ubuntu-nginx-bastion.md](lab-01-secure-ubuntu-nginx-bastion.md)**
 
 Summary of phases:
 
@@ -68,12 +64,14 @@ sudo systemctl status nginx
 
 ## Verification
 
-- ✅ Bastion SSH session to `vm-linux-nginx-prod` (no port 22 exposed publicly on the VM)
+- ✅ Bastion SSH session to `vm-linux-nginx-prod` (over the VM's private IP)
 - ✅ Nginx `active (running)`
 - ✅ Welcome page reachable via public IP
 - ✅ Welcome page reachable via `http://scarstack-nginx-prod.<region>.cloudapp.azure.com`
 
-Screenshots for every phase are in [`screenshots/`](screenshots/).
+## Post-lab Review
+
+On review, I found that the subnet NSG allowed inbound SSH (port 22) without restricting the source to the Bastion subnet, while the VM had a public IP. That means SSH was likely reachable from the internet even though Bastion was in place. The correct configuration limits the port 22 rule's source to the AzureBastionSubnet range, or removes the rule entirely, since Bastion reaches the VM over the virtual network. The environment has since been decommissioned.
 
 ## Skills Demonstrated
 

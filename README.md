@@ -81,6 +81,6 @@ Azure Resource Groups · Virtual Networks & Subnetting · Network Security Group
 
 ## About Me
 
-IT Support & Cloud Systems Analyst with 6+ years in hybrid cloud (Azure, Linux/Windows). **AZ-104** and **CompTIA Cloud+** certified · B.S. Azure Cloud & Network Engineering (WGU).
+IT support professional in transition. Certified in **AZ-104**, **AWS Solutions Architect Associate**, **Security+**, and **CompTIA Cloud+**. Completing a B.S. in Cloud and Network Engineering at Western Governors University (WGU), expected December 2027.
 
 📧 adam.jubril78@gmail.com

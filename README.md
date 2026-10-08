@@ -18,7 +18,7 @@ Internet ──HTTP:80──▶ Public IP + DNS label ──▶ Subnet NSG ─�
                                                                 │ subnet-production 10.1.0.0/26
 Admin ──HTTPS:443──▶ Azure Bastion ──SSH (private IP)──▶───────┘
                      │ AzureBastionSubnet
-                     └── vnet-scarstack-security-prod 10.1.0.0/14
+                     └── vnet-scarstack-security-prod (10.1.x.x)
 ```
 
 **Key security decisions:**
@@ -32,7 +32,7 @@ Admin ──HTTPS:443──▶ Azure Bastion ──SSH (private IP)──▶─�
 | Resource | Name | Notes |
 |---|---|---|
 | Resource Group | `rg-scarstack-security-prod` | Container for all lab resources |
-| Virtual Network | `vnet-scarstack-security-prod` | `10.1.0.0/14` |
+| Virtual Network | `vnet-scarstack-security-prod` | 10.1.x.x address space (exact prefix not recorded) |
 | Subnet | `subnet-production` | `10.1.0.0/26` |
 | Azure Bastion | enabled on VNet | Secure browser-based SSH |
 | NSG | `nsg-scarstack-production` | Allows 22/80/443, associated to subnet. Port 22 should have been limited to the Bastion subnet (see Post-lab review) |
